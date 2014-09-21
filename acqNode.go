@@ -5,16 +5,16 @@ package goAcquisition
 
 import (
 	"regexp"
-	"strings"
 	"strconv"
+	"strings"
 )
 
-type ETargetEncodeType int32
+type ETargetEncodeType string
 
 const (
-	EncodeType_GB2312 ETargetEncodeType = iota
-	EncodeType_UTF8
-	EncodeType_BIG5
+	EncodeType_GB2312 ETargetEncodeType = "gb2312"
+	EncodeType_UTF8   ETargetEncodeType = "utf8"
+	EncodeType_BIG5   ETargetEncodeType = "big5"
 )
 
 type EMatchMode int32
@@ -32,20 +32,21 @@ type AcqNode struct {
 	MatchMode      EMatchMode
 	TargetListUrls []string
 	TargetUrlRule  *TargetUrlMatch
+	TargetRule     []*AcqTarget
 }
 
 func NewDefaultAcqNode(nodeName string) *AcqNode {
 	return &AcqNode{
-		NodeName: nodeName,
-		TargetEncode: EncodeType_GB2312,
-		MatchMode: Mode_String,
+		NodeName:       nodeName,
+		TargetEncode:   EncodeType_GB2312,
+		MatchMode:      Mode_String,
 		TargetListUrls: make([]string, 0),
 		TargetUrlRule: &TargetUrlMatch{
-			BeginHtml: "",
-			EndHtml: "",
+			BeginHtml:     "",
+			EndHtml:       "",
 			ImgHandleFlag: true,
-			MustRegex: "",
-			NoRegex: "",
+			MustRegex:     "",
+			NoRegex:       "",
 		},
 	}
 }
