@@ -6,7 +6,7 @@ package conf
 import (
 	"github.com/Unknwon/goconfig"
 	"log"
-	"path/filepath"
+//	"path/filepath"
 )
 
 const (
@@ -20,7 +20,8 @@ const (
 )
 
 var (
-	confFilePath = filepath.Join("conf", "conf.ini")
+//	confFilePath = filepath.Join("conf", "conf.ini")
+	confFilePath = "conf.ini"
 	confFile     *goconfig.ConfigFile
 
 	// default section
