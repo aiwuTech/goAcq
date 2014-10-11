@@ -4,11 +4,11 @@
 package goAcquisition
 
 import (
-	"net/http"
-	"io/ioutil"
-	"fmt"
+	. "goAcquisition/conf" // The import path format is not recommented
 	"code.google.com/p/mahonia"
-	."goAcquisition/conf"
+	"fmt"
+	"io/ioutil"
+	"net/http"
 )
 
 func readWebPageSource(url string, encode ETargetEncodeType) (string, error) {

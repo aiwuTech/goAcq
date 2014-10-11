@@ -26,59 +26,85 @@ const (
 
 var UrlPattern = "((http|ftp|https)://)(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9\\&%_\\./-~-]*)?"
 
+
+type targetUrlMatch struct {
+	beginHtml     string
+	endHtml       string
+	imgHandleFlag bool
+	mustRegex     string
+	noRegex       string
+}
+
 type AcqNode struct {
-	NodeName       string
-	TargetEncode   ETargetEncodeType
-	MatchMode      EMatchMode
-	TargetListUrls []string
-	TargetUrlRule  *TargetUrlMatch
-	TargetRule     []*AcqTarget
+	nodeName       string
+	targetEncode   ETargetEncodeType
+	matchMode      EMatchMode
+	targetListUrls []string
+	targetUrlRule  *targetUrlMatch
+	targetRule     []*AcqTarget
 }
 
 func NewDefaultAcqNode(nodeName string) *AcqNode {
 	return &AcqNode{
-		NodeName:       nodeName,
-		TargetEncode:   EncodeType_GB2312,
-		MatchMode:      Mode_String,
-		TargetListUrls: make([]string, 0),
-		TargetUrlRule: &TargetUrlMatch{
-			BeginHtml:     "",
-			EndHtml:       "",
-			ImgHandleFlag: true,
-			MustRegex:     "",
-			NoRegex:       "",
+		nodeName:       nodeName,
+		targetEncode:   EncodeType_GB2312,
+		matchMode:      Mode_String,
+		targetListUrls: make([]string, 0),
+		targetUrlRule: &targetUrlMatch{
+			beginHtml:     "",
+			endHtml:       "",
+			imgHandleFlag: true,
+			mustRegex:     "",
+			noRegex:       "",
 		},
 	}
 }
 
 func (a *AcqNode) SetNodeName(nodeName string) {
-	a.NodeName = nodeName
+	a.nodeName = nodeName
 }
 
 func (a *AcqNode) GetNodeName() string {
-	return a.NodeName
+	return a.nodeName
 }
 
 func (a *AcqNode) SetTargetEncode(encode ETargetEncodeType) {
-	a.TargetEncode = encode
+	a.targetEncode = encode
 }
 
 func (a *AcqNode) GetTargetEncode() ETargetEncodeType {
-	return a.TargetEncode
+	return a.targetEncode
 }
 
 func (a *AcqNode) SetMatchMode(mode EMatchMode) {
-	a.MatchMode = mode
+	a.matchMode = mode
 }
 
 func (a *AcqNode) GetMatchMode() EMatchMode {
-	return a.MatchMode
+	return a.matchMode
+}
+
+func (a *AcqNode) SetTargetUrlBeginHtml(html string) {
+	a.targetUrlRule.beginHtml = html
+}
+
+func (a *AcqNode) GetTargetUrlBeginHtml() string {
+	return a.targetUrlRule.beginHtml
+}
+
+func (a *AcqNode) SetTargetUrlEndHtml(html string) {
+	a.targetUrlRule.endHtml = html
+}
+
+func (a *AcqNode) GetTargetUrlEndHtml() string {
+	return a.targetUrlRule.endHtml
 }
 
 func (a *AcqNode) addListUrl(url string) {
-	a.TargetListUrls = append(a.TargetListUrls, url)
+	a.targetListUrls = append(a.targetListUrls, url)
 }
 
+// 添加采集列表
 func (a *AcqNode) AddListUrls(urls ...string) (in []string) {
 
 	in = make([]string, 0)
@@ -114,58 +140,30 @@ func (a *AcqNode) AddListUrlsByTag(urlMatch string, min, max, gap uint32) (in []
 	return a.AddListUrls(in...)
 }
 
+// 采集目标列表个数
 func (a *AcqNode) Len() int {
-	return len(a.TargetListUrls)
+	return len(a.targetListUrls)
 }
 
+// 采集列表url
 func (a *AcqNode) GetTargetListUrls() []string {
-	return a.TargetListUrls
+	return a.targetListUrls
 }
 
-type TargetUrlMatch struct {
-	BeginHtml     string
-	EndHtml       string
-	ImgHandleFlag bool
-	MustRegex     string
-	NoRegex       string
-}
+func (a *AcqNode) Exec() {
+	for _, listUrl := range a.GetTargetListUrls() {
+		pageSource, err := readWebPageSource(listUrl, a.GetTargetEncode())
+		if err != nil {
+			continue
+		}
 
-func (t *TargetUrlMatch) SetBeginHtml(html string) {
-	t.BeginHtml = html
-}
+		switch a.GetMatchMode() {
+		case Mode_Regex:
+		case Mode_String:
+			pageSource = strings.SplitAfterN(pageSource, a.GetTargetUrlBeginHtml(), 1)[0]
+			pageSource = strings.Split(pageSource, a.GetTargetUrlEndHtml())[0]
 
-func (t *TargetUrlMatch) GetBeginHtml() string {
-	return t.BeginHtml
-}
-
-func (t *TargetUrlMatch) SetEndHtml(html string) {
-	t.EndHtml = html
-}
-
-func (t *TargetUrlMatch) GetEndHtml() string {
-	return t.EndHtml
-}
-
-func (t *TargetUrlMatch) SetImgHandleFlag(flag bool) {
-	t.ImgHandleFlag = flag
-}
-
-func (t *TargetUrlMatch) GetImgHandleFlag() bool {
-	return t.ImgHandleFlag
-}
-
-func (t *TargetUrlMatch) SetMustRegex(regex string) {
-	t.MustRegex = regex
-}
-
-func (t *TargetUrlMatch) GetMustRegex() string {
-	return t.MustRegex
-}
-
-func (t *TargetUrlMatch) SetNoRegex(regex string) {
-	t.NoRegex = regex
-}
-
-func (t *TargetUrlMatch) GetNoRegex() string {
-	return t.NoRegex
+			println(pageSource)
+		}
+	}
 }
