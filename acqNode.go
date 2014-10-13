@@ -6,6 +6,7 @@ package goAcq
 import (
 	"regexp"
 	"strconv"
+	"github.com/PuerkitoBio/goquery"
 	"strings"
 )
 
@@ -160,10 +161,12 @@ func (a *AcqNode) Exec() {
 		switch a.GetMatchMode() {
 		case Mode_Regex:
 		case Mode_String:
-			pageSource = strings.SplitAfterN(pageSource, a.GetTargetUrlBeginHtml(), 1)[0]
+			pageSource = strings.Split(pageSource, a.GetTargetUrlBeginHtml())[1]
 			pageSource = strings.Split(pageSource, a.GetTargetUrlEndHtml())[0]
 
+			
 			println(pageSource)
 		}
 	}
 }
+

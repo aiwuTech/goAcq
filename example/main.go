@@ -4,14 +4,14 @@
 package main
 
 import (
-	"goAcquisition"
+	"goAcq"
 )
 
 func main() {
-	acqNode := goAcquisition.NewDefaultAcqNode("test")
-	acqNode.AddListUrlsByTag("http://cd.qq.com/l/auto/focusauto/list20131121151120_(*).htm", 2, 5, 1)
-	acqNode.SetMatchMode(goAcquisition.Mode_String)
-	acqNode.SetTargetEncode(goAcquisition.EncodeType_GB2312)
+	acqNode := goAcq.NewDefaultAcqNode("test")
+	acqNode.AddListUrlsByTag("http://cd.qq.com/l/auto/focusauto/list20131121151120_(*).htm", 2, 2, 1)
+	acqNode.SetMatchMode(goAcq.Mode_String)
+	acqNode.SetTargetEncode(goAcq.EncodeType_GB2312)
 	acqNode.SetTargetUrlBeginHtml("<div class=\"box_hr16\"></div>")
 	acqNode.SetTargetUrlEndHtml("<div class=\"box_hr16\"></div>")
 
