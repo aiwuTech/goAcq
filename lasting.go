@@ -1,7 +1,7 @@
 // Copyright 2014 mint.zhao.chiu@gmail.com. All rights reserved.
 // Use of this source code is governed by a Apache License 2.0
 // that can be found in the LICENSE file.
-package goAcquisition
+package goAcq
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"github.com/go-xorm/xorm"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
-	. "goAcquisition/conf"
+	."goAcq/conf"
 	"log"
 	"path/filepath"
 	"time"
@@ -94,7 +94,7 @@ func xConnDb() (*xorm.Engine, error) {
 
 	switch DbType {
 	case "sqlite":
-		return xorm.NewEngine("sqlite3", filepath.Join(os.Getenv("GOPATH"), "src", "goAcquisition", "data", fmt.Sprintf("%s.db", DbName)))
+		return xorm.NewEngine("sqlite3", filepath.Join(os.Getenv("GOPATH"), "src", "goAcq", "data", fmt.Sprintf("%s.db", DbName)))
 	case "mysql":
 		return xorm.NewEngine("mysql", fmt.Sprintf("%s:%s@tcp(%v)/%s?charset=%v", DbUser, DbPwd, DbHost, DbName, DbCharSet))
 	case "pgsql":
